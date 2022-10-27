@@ -1,0 +1,110 @@
+version: "3" 
+services:
+  rabbitmq3:
+    container_name: rabbitmq
+    image: rabbitmq:3.8-management-alpine
+    environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+        # AMQP protocol port
+        - '5672:5672'
+        # HTTP management UI
+        - '15672:15672'
+    networks:
+        - webnet
+  visualizer:
+    image: dockersamples/visualizer:stable  # visualizer è disponibile dall’hub Docker pubblico
+    ports:                                  # visualizza uno schema dello swarm e, per questo,
+      - "8080:8080"                         # deve girare sul manager (v. sotto deploy:placement:constraints)
+    volumes:                                          # la chiave volumes mappa la 
+      - "/var/run/docker.sock:/var/run/docker.sock"   # socket docker del visualizer su quella dell’host
+    deploy:
+      placement:
+        constraints: [node.role == manager]    # visualizer deve girare sul manager per poter 
+    networks:                                  # visualizzare una rappresentazione grafica dello swarm 
+      - webnet
+  wheater: # al servizio verrà dato il nome dell'immagine con questo suffisso: get-started_web
+    image: giomar19/wheater:isd  # immagine eseguita dai container/repliche
+           # user/name:tag individuano l’immagine desiderata
+    deploy:        # specifiche per il deployment delle repliche
+      replicas: 1  # n. di repliche
+      resources:
+        limits:        # limiti di uso delle risorse che nessuna replica  può superare
+          cpus: "0.1"  # NB: 0.1=10% della CPU (su tutti i core)
+          memory: 50M
+      restart_policy:  # immediately restart any      
+        condition:     # container, should 
+          on-failure   # it fail
+    ports:
+      - "4500:4500"      # mappa port host:container (- introduce elemento di una lista)
+    networks:
+      - webnet
+  die: # al servizio verrà dato il nome dell'immagine con questo suffisso: get-started_web
+    image: giomar19/die:isd  # immagine eseguita dai container/repliche
+           # user/name:tag individuano l’immagine desiderata
+    deploy:        # specifiche per il deployment delle repliche
+      replicas: 1  # n. di repliche
+      resources:
+        limits:        # limiti di uso delle risorse che nessuna replica  può superare
+          cpus: "0.1"  # NB: 0.1=10% della CPU (su tutti i core)
+          memory: 50M
+      restart_policy:  # immediately restart any      
+        condition:     # container, should 
+          on-failure   # it fail
+    ports:
+      - "4000:4000"      # mappa port host:container (- introduce elemento di una lista)
+    networks:
+      - webnet 
+  food: # al servizio verrà dato il nome dell'immagine con questo suffisso: get-started_web
+    image: giomar19/food:isd  # immagine eseguita dai container/repliche
+           # user/name:tag individuano l’immagine desiderata
+    deploy:        # specifiche per il deployment delle repliche
+      replicas: 1  # n. di repliche
+      resources:
+        limits:        # limiti di uso delle risorse che nessuna replica  può superare
+          cpus: "0.1"  # NB: 0.1=10% della CPU (su tutti i core)
+          memory: 50M
+      restart_policy:  # immediately restart any      
+        condition:     # container, should 
+          on-failure   # it fail
+    ports:
+      - "8000:8000"      # mappa port host:container (- introduce elemento di una lista)
+    networks:
+      - webnet 
+  back: # al servizio verrà dato il nome dell'immagine con questo suffisso: get$
+    image: giomar19/backend:isd  # immagine eseguita dai container/replic$
+           # user/name:tag individuano l’immagine desiderata
+    deploy:        # specifiche per il deployment delle repliche
+      replicas: 1  # n. di repliche
+      resources:
+        limits:        # limiti di uso delle risorse che nessuna replica  può s$
+          cpus: "0.1"  # NB: 0.1=10% della CPU (su tutti i core)
+          memory: 50M
+      restart_policy:  # immediately restart any
+        condition:     # container, should
+          on-failure   # it fail
+    ports:
+      - "3000:3000"	 # mappa port host:container (- introduce elemento di u$
+    networks:
+      - webnet 
+  front: # al servizio verrà dato il nome dell'immagine con questo suffisso: get$
+    image: giomar19/frontend:isd  # immagine eseguita dai container/replic$
+           # user/name:tag individuano l’immagine desiderata
+    deploy:        # specifiche per il deployment delle repliche
+      replicas: 1  # n. di repliche
+      resources:
+        limits:        # limiti di uso delle risorse che nessuna replica  può s$
+          cpus: "0.1"  # NB: 0.1=10% della CPU (su tutti i core)
+          memory: 50M
+      restart_policy:  # immediately restart any
+        condition:     # container, should
+          on-failure   # it fail
+    ports:
+      - "80:80"	 # mappa port host:container (- introduce elemento di u$
+    networks:
+      - webnet
+networks: # definisce, per i container, la rete webnet con eventuali parametri
+  webnet: # qui parametri di default (rete overlay, load-balanced)
+  rabbitmq:
+    driver: bridge
