@@ -20,7 +20,7 @@
 5) New terminal:
         ```
          - cd frontend
-         - node index.js
+         - ng serve
         ```
 6) New terminal:
         ```
