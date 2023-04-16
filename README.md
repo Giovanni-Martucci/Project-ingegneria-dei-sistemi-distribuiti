@@ -1,14 +1,11 @@
 # ISD-PROJECT
+### Management of permissions and communication between services and users.
 
-### Gestione delle autorizzazioni e comunicazioni tra servizi e utenti.
-
-### Argomenti analizzati: 
- - comunicazione tramite RabbitMQ: Routing and RPC
- - Design patterns:
-    -   Reference Monitor
-    -   Timeout()
-
-
+### Topics covered:
+  - Communication through RabbitMQ: Routing and RPC
+  - Design patterns:
+     - Reference Monitor
+     - Timeout()
 
 ## USAGE
 
